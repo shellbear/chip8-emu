@@ -22,6 +22,14 @@ impl Default for Screen {
 }
 
 impl Screen {
+    pub fn clear(&mut self) {
+        for y in 0..SCREEN_HEIGHT {
+            for x in 0..SCREEN_WIDTH {
+                self.mem[y][x] = false;
+            }
+        }
+    }
+
     pub fn scroll_down(&mut self, num_lines: u8) {
         for y in 0..SCREEN_HEIGHT {
             for x in 0..SCREEN_WIDTH {

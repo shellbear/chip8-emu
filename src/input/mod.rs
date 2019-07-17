@@ -16,11 +16,11 @@ impl Default for Input {
 }
 
 impl Input {
-    pub fn get_key_state(&self, key: u8) -> bool {
+    pub fn is_key_down(&self, key: u8) -> bool {
         self.keys[key as usize]
     }
 
-    pub fn set_key_state(&mut self, key: u8, down: bool) {
+    pub fn set_key_down(&mut self, key: u8, down: bool) {
         self.keys[key as usize] = down;
     }
 }

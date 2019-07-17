@@ -1,4 +1,5 @@
 // More infos here: https://en.wikipedia.org/wiki/CHIP-8#Memory
+
 use super::ENTRY_POINT;
 
 pub const MEMORY_SIZE: usize = 0xfff;

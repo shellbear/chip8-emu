@@ -1,3 +1,6 @@
+// More infos here: https://en.wikipedia.org/wiki/CHIP-8#Registers
+
+
 use super::ENTRY_POINT;
 
 pub const REGISTERS_NUMBER: usize = 16;
@@ -20,5 +23,11 @@ impl Default for Registers {
             i: 0,
             v: [0; REGISTERS_NUMBER]
         }
+    }
+}
+
+impl Registers {
+    pub fn set_carry_flag(&mut self, carry: bool) {
+        self.v[0xF] = carry as u8;
     }
 }
