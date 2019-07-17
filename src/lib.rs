@@ -18,7 +18,7 @@ use std::path::PathBuf;
 use std::io::prelude::*;
 use std::fs::File;
 
-const ENTRY_SIZE: usize = 0x1ff;
+const ENTRY_POINT: usize = 0x200;
 const MEMORY_SIZE: usize = 0xfff;
 
 pub struct Chip8 {
@@ -47,27 +47,27 @@ impl Chip8 {
 
         File::open(&file).and_then(|mut f| f.read_to_end(&mut data)).map_err(|_| "Could not read ROM")?;
 
-        if data.len() > (MEMORY_SIZE - ENTRY_SIZE) {
+        if data.len() > (MEMORY_SIZE - ENTRY_POINT) {
             return Err("ROM is too big");
         }
 
-        for i in 0..data.len() {
-            self.memory.ram[ENTRY_SIZE + i] = data[i];
-        }
+        self.memory.load(&data);
 
         Ok(())
     }
 
     pub fn exec_next_instruction(&mut self) {
-        let instr = (self.memory.read(self.registers.get_next_pc()) as u16) << 8 |
-            self.memory.read(self.registers.get_next_pc()) as u16;
+        let instr = (self.memory.read(self.registers.pc) as u16) << 8 |
+            self.memory.read(self.registers.pc + 1) as u16;
 
         let op = [
-            ((instr & 0xF000) >> 0xc) as u8,
-            ((instr & 0x0F00) >> 0x8) as u8,
-            ((instr & 0x00F0) >> 0x4) as u8,
-            ((instr & 0x000F) >> 0x0) as u8
+            ((instr & 0xF000) >> 12) as u8,
+            ((instr & 0x0F00) >> 8) as u8,
+            ((instr & 0x00F0) >> 4) as u8,
+            (instr & 0x000F) as u8
         ];
+
+        self.registers.pc += 2;
 
         match (op[0], op[1], op[2], op[3]) {
             (0x0, 0x0, 0xE, 0x0) => println!("CLEAR SCREEN"), //	Clear the screen

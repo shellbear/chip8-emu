@@ -11,7 +11,7 @@ fn main() -> StrResult<()> {
 
     chip8.load_rom(file)?;
 
-    loop {
+    for _ in 1..10 {
         chip8.exec_next_instruction();
     }
 

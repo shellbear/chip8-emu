@@ -1,6 +1,6 @@
 // More infos here: https://en.wikipedia.org/wiki/CHIP-8#The_stack
 
-const STACK_SIZE: usize = 16;
+pub const STACK_SIZE: usize = 16;
 
 pub struct Stack {
     // 16 stack addresses
