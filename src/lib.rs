@@ -18,7 +18,6 @@ use utils::StrResult;
 
 use rand::{Rng, SeedableRng, XorShiftRng};
 use std::path::PathBuf;
-use std::io::prelude::*;
 use std::fs::File;
 
 const ENTRY_POINT: usize = 0x200;
@@ -67,7 +66,7 @@ impl<R: Rng> Chip8<R> {
         Ok(())
     }
 
-    pub fn exec_next_instruction(&mut self) {
+    pub fn exec_next_instruction(&mut self) -> StrResult<()> {
         let instr = (self.memory.read(self.registers.pc) as u16) << 8 |
             self.memory.read(self.registers.pc + 1) as u16;
 
@@ -194,14 +193,16 @@ impl<R: Rng> Chip8<R> {
                 }
             }, //    Skip the following instruction if the key corresponding to the hex value currently stored in register VX is not pressed
             (0xF, _, 0x0, 0x7) => self.registers.v[op[1] as usize] = self.timers.delay_timer, //    Store the current value of the delay timer in register VX
-            (0xF, _, 0x0, 0xA) => println!("VX = KEYPRESSED"), //    Wait for a keypress and store the result in register VX
+            (0xF, _, 0x0, 0xA) => println!("READ INPUT"), //    Wait for a keypress and store the result in register VX
             (0xF, _, 0x1, 0x5) => self.timers.delay_timer = self.registers.v[op[1] as usize], //    Set the delay timer to the value of register VX
             (0xF, _, 0x1, 0x8) => self.timers.sound_timer = self.registers.v[op[1] as usize], //    Set the sound timer to the value of register VX
             (0xF, _, 0x1, 0xE) => self.registers.i = self.registers.i.wrapping_add(self.registers.v[op[1] as usize] as u16), //    Add the value stored in register VX to register I
             (0xF, _, 0x2, 0x9) => println!("I = SPRITE(VX)"), //    Set I to the memory address of the sprite data corresponding to the hexadecimal digit stored in register VX
-            (0xF, _, 0x3, 0x3) => println!(""), //    Store the binary-coded decimal equivalent of the value stored in register VX at addresses I, I + 1, and I + 2
-            (0xF, _, 0x5, 0x5) => println!(""), //    Store the values of registers V0 to VX inclusive in memory starting at address I
-            _ => eprintln!("Received an invalid instruction")
+            (0xF, _, 0x3, 0x3) => println!("STORE BINARY"), //    Store the binary-coded decimal equivalent of the value stored in register VX at addresses I, I + 1, and I + 2
+            (0xF, _, 0x5, 0x5) => println!("STORE VALUES"), //    Store the values of registers V0 to VX inclusive in memory starting at address I
+            _ => return Err("Received an invalid instruction.")
         };
+
+        Ok(())
     }
 }
