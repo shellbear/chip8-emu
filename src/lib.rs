@@ -17,6 +17,7 @@ use timers::Timers;
 use utils::StrResult;
 
 use rand::{Rng, SeedableRng, XorShiftRng};
+use std::io::Read;
 use std::path::PathBuf;
 use std::fs::File;
 
